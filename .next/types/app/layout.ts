@@ -1,4 +1,4 @@
-// File: C:\Users\DELL\Documents\HomeCheck\app\layout.js
+// File: /Users/new/HomeCheck/app/layout.js
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
