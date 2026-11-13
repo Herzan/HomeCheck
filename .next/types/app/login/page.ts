@@ -1,4 +1,4 @@
-// File: /Users/new/HomeCheck/app/login/page.js
+// File: C:\Users\DELL\Documents\HomeCheck\app\login\page.js
 import * as entry from '../../../../app/login/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
