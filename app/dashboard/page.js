@@ -81,25 +81,26 @@ export default function Dashboard() {
     ]));
   }
 
-  if (!u || home === undefined) return <p style={{ padding: 20 }}>Loading…</p>;
+  if (!u || home === undefined) return <p className="loading">Loading…</p>;
   const owner = role === 'owner';
 
   // First-time setup
   if (!home) {
-    return (
-      <div style={{ maxWidth: 420, margin: '60px auto' }} className="card">
-        <h2>Set up your {owner ? 'home' : 'rental'}</h2>
-        <form onSubmit={mkHome}>
-          <input required placeholder="Address" value={hf.address}
-            onChange={e => setHf({ ...hf, address: e.target.value })} style={{ width: '100%' }} />
-          <input type="date" title="Move-in date" value={hf.move_in_date}
-            onChange={e => setHf({ ...hf, move_in_date: e.target.value })} />
-          <button disabled={saving}>{saving ? 'Saving…' : 'Save'}</button>
-        </form>
-        {homeErr && <p style={{ color: '#b91c1c' }}>Error: {homeErr}</p>}
-      </div>
-    );
-  }
+  return (
+    <div className="card setup">
+      <h2>Set up your {owner ? 'home' : 'rental'}</h2>
+      <p className="hint">Add your address to start tracking appliances, tasks and warranties.</p>
+      <form onSubmit={mkHome}>
+        <input required placeholder="Address" value={hf.address}
+          onChange={e => setHf({ ...hf, address: e.target.value })} />
+        <input type="date" title="Move-in date" value={hf.move_in_date}
+          onChange={e => setHf({ ...hf, move_in_date: e.target.value })} />
+        <button disabled={saving}>{saving ? 'Saving…' : 'Save'}</button>
+      </form>
+      {homeErr && <p className="error">Error: {homeErr}</p>}
+    </div>
+  );
+}
 
   const tabs = ['Overview', 'Appliances', 'Tasks', 'Warranties & Receipts', 'Service History', 'Providers', 'Calendar'];
   const ao = apps.map(a => ({ v: a.id, l: `${a.type} ${a.brand || ''}` }));
@@ -109,7 +110,7 @@ export default function Dashboard() {
   return (
     <>
       <div className="top">
-        <b>🏠 HomeCheck — {owner ? 'Homeowner' : 'Renter'}: {home.address}</b>
+        <b>🏠 HomeCheck — <span className="role">{owner ? 'Homeowner' : 'Renter'}</span>: {home.address}</b>
         <button className="sec" onClick={async () => { await supabase.auth.signOut(); r.push('/login'); }}>Log out</button>
       </div>
       <div className="wrap">
@@ -119,10 +120,12 @@ export default function Dashboard() {
 
         {tab === 'Overview' && (
           <>
-            <div className="card" style={{ display: 'flex', gap: 40 }}>
-              <div><small>Open tasks</small><h1>{stats.open ?? 0}</h1></div>
-              <div><small>Overdue</small><h1 style={{ color: stats.overdue ? '#dc2626' : 'inherit' }}>{stats.overdue ?? 0}</h1></div>
-              <div><small>Documents</small><h1>{stats.docs ?? 0}</h1></div>
+            <div className="card">
+              <div className="stats-row">
+                <div className="stat"><small>Open tasks</small><h1>{stats.open ?? 0}</h1></div>
+                <div className="stat"><small>Overdue</small><h1 className={stats.overdue ? 'danger' : ''}>{stats.overdue ?? 0}</h1></div>
+                <div className="stat"><small>Documents</small><h1>{stats.docs ?? 0}</h1></div>
+              </div>
             </div>
             <Analytics />
           </>
