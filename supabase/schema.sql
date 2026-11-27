@@ -102,3 +102,5 @@ alter table task_templates enable row level security; create policy "read" on ta
 insert into storage.buckets(id,name,public) values ('documents','documents',false) on conflict do nothing;
 create policy "own files" on storage.objects for all using (bucket_id='documents' and (storage.foldername(name))[1]=auth.uid()::text)
   with check (bucket_id='documents' and (storage.foldername(name))[1]=auth.uid()::text);
+
+-- Seasonal checklists: see supabase/seasonal.sql (also run it on an existing database)

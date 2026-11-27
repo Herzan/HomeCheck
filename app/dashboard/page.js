@@ -5,6 +5,8 @@ import { supabase } from '../../lib/supabase';
 import Crud from '../../components/Crud';
 import Documents from '../../components/Documents';
 import Analytics from '../../components/Analytics';
+import Seasonal from '../../components/Seasonal';
+import Bell, { AlertsPanel } from '../../components/Notifications';
 import { buildICS, download } from '../../lib/ics';
 
 const TYPES = ['HVAC', 'Water Heater', 'Furnace', 'Refrigerator', 'Dishwasher', 'Washer', 'Dryer', 'Smoke Detector', 'Roof/Gutters'].map(v => ({ v, l: v }));
@@ -23,6 +25,7 @@ export default function Dashboard() {
   const [homeErr, setHomeErr] = useState('');
   const [saving, setSaving] = useState(false);
   const [stats, setStats] = useState({});
+  const [rk, setRk] = useState(0); // bumps to refresh alerts
 
   // Load user, role and home
   useEffect(() => {
@@ -46,6 +49,7 @@ export default function Dashboard() {
     const today = new Date().toISOString().slice(0, 10);
     const docs = (await supabase.from('documents').select('id', { count: 'exact', head: true })).count;
     setStats({ open: t.length, overdue: t.filter(x => x.due_date < today).length, docs });
+    setRk(k => k + 1);
   };
   useEffect(() => { if (home) refs(); }, [home, tab]);
 
@@ -101,7 +105,7 @@ export default function Dashboard() {
     );
   }
 
-  const tabs = ['Overview', 'Appliances', 'Tasks', 'Warranties & Receipts', 'Service History', 'Providers', 'Calendar'];
+  const tabs = ['Overview', 'Appliances', 'Tasks', 'Seasonal', 'Warranties & Receipts', 'Service History', 'Providers', 'Calendar'];
   const ao = apps.map(a => ({ v: a.id, l: `${a.type} ${a.brand || ''}` }));
   const an = id => { const a = apps.find(x => x.id === id); return a ? `${a.type} ${a.brand || ''}` : ''; };
   const today = new Date().toISOString().slice(0, 10);
@@ -110,7 +114,7 @@ export default function Dashboard() {
     <>
       <div className="top">
         <b>🏠 HomeCheck — {owner ? 'Homeowner' : 'Renter'}: {home.address}</b>
-        <button className="sec" onClick={async () => { await supabase.auth.signOut(); r.push('/login'); }}>Log out</button>
+        <span><Bell onOpen={setTab} refreshKey={rk} /><button className="sec" onClick={async () => { await supabase.auth.signOut(); r.push('/login'); }}>Log out</button></span>
       </div>
       <div className="wrap">
         <div className="nav">
@@ -124,6 +128,7 @@ export default function Dashboard() {
               <div><small>Overdue</small><h1 style={{ color: stats.overdue ? '#dc2626' : 'inherit' }}>{stats.overdue ?? 0}</h1></div>
               <div><small>Documents</small><h1>{stats.docs ?? 0}</h1></div>
             </div>
+            <AlertsPanel onOpen={setTab} refreshKey={rk} />
             <Analytics />
           </>
         )}
@@ -181,6 +186,8 @@ export default function Dashboard() {
               </>
             )} />
         )}
+
+        {tab === 'Seasonal' && <Seasonal uid={u.id} appliances={apps} onChange={refs} />}
 
         {tab === 'Warranties & Receipts' && <Documents uid={u.id} appliances={apps} />}
 
