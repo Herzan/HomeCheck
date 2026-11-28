@@ -114,13 +114,14 @@ export default function Dashboard() {
   return (
     <>
       <div className="top">
-<<<<<<< HEAD
-        <b>🏠 HomeCheck — {owner ? 'Homeowner' : 'Renter'}: {home.address}</b>
-        <span><Bell onOpen={setTab} refreshKey={rk} /><button className="sec" onClick={async () => { await supabase.auth.signOut(); r.push('/login'); }}>Log out</button></span>
-=======
+        <b>🏠 HomeCheck — <span className="role">{owner ? 'Homeowner' : 'Renter'}</span>: {home.address}</b>
+        <span>
+          <Bell onOpen={setTab} refreshKey={rk} />
+          <button className="sec" onClick={async () => { await supabase.auth.signOut(); r.push('/login'); }}>Log out</button>
+        </span>
         <b>🏠 HomeCheck — <span className="role">{owner ? 'Homeowner' : 'Renter'}</span>: {home.address}</b>
         <button className="sec" onClick={async () => { await supabase.auth.signOut(); r.push('/login'); }}>Log out</button>
->>>>>>> 20f5e4a37469df38e6beeb9f078f0e3360c0f588
+20f5e4a37469df38e6beeb9f078f0e3360c0f588
       </div>
       <div className="wrap">
         <div className="nav">
